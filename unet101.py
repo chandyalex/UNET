@@ -81,25 +81,25 @@ def residual_block(blockInput, num_filters=16):
     return x
 def build_model(input_layer, start_neurons, DropoutRatio = 0.5):
     # 101 -> 50
-    conv1 = Conv2D(start_neurons * 4, (3, 3), activation=None, padding="same")(input_layer)
-    conv1 = residual_block(conv1,start_neurons * 4)
-    conv1 = residual_block(conv1,start_neurons * 4)
+    conv1 = Conv2D(start_neurons * 1, (3, 3), activation=None, padding="same")(input_layer)
+    conv1 = residual_block(conv1,start_neurons * 1)
+    conv1 = residual_block(conv1,start_neurons * 1)
     conv1 = Activation('relu')(conv1)
     pool1 = MaxPooling2D((2, 2))(conv1)
     pool1 = Dropout(DropoutRatio/2)(pool1)
 
     # 50 -> 25
-    conv2 = Conv2D(start_neurons * 8, (3, 3), activation=None, padding="same")(pool1)
-    conv2 = residual_block(conv2,start_neurons * 8)
-    conv2 = residual_block(conv2,start_neurons * 8)
+    conv2 = Conv2D(start_neurons * 4, (3, 3), activation=None, padding="same")(pool1)
+    conv2 = residual_block(conv2,start_neurons * 4)
+    conv2 = residual_block(conv2,start_neurons * 4)
     conv2 = Activation('relu')(conv2)
     pool2 = MaxPooling2D((2, 2))(conv2)
     pool2 = Dropout(DropoutRatio)(pool2)
 
     # 25 -> 12
-    conv3 = Conv2D(start_neurons * 12, (3, 3), activation=None, padding="same")(pool2)
-    conv3 = residual_block(conv3,start_neurons * 12)
-    conv3 = residual_block(conv3,start_neurons * 12)
+    conv3 = Conv2D(start_neurons * 8, (3, 3), activation=None, padding="same")(pool2)
+    conv3 = residual_block(conv3,start_neurons * 8)
+    conv3 = residual_block(conv3,start_neurons * 8)
     conv3 = Activation('relu')(conv3)
     pool3 = MaxPooling2D((2, 2))(conv3)
     pool3 = Dropout(DropoutRatio)(pool3)
@@ -113,9 +113,9 @@ def build_model(input_layer, start_neurons, DropoutRatio = 0.5):
     pool4 = Dropout(DropoutRatio)(pool4)
 
     # Middle
-    convm = Conv2D(start_neurons * 20, (3, 3), activation=None, padding="same")(pool4)
-    convm = residual_block(convm,start_neurons * 20)
-    convm = residual_block(convm,start_neurons * 20)
+    convm = Conv2D(start_neurons * 32, (3, 3), activation=None, padding="same")(pool4)
+    convm = residual_block(convm,start_neurons * 32)
+    convm = residual_block(convm,start_neurons * 32)
     convm = Activation('relu')(convm)
     
     # 6 -> 12
@@ -130,34 +130,34 @@ def build_model(input_layer, start_neurons, DropoutRatio = 0.5):
     
     # 12 -> 25
     #deconv3 = Conv2DTranspose(start_neurons * 4, (3, 3), strides=(2, 2), padding="same")(uconv4)
-    deconv3 = Conv2DTranspose(start_neurons * 12, (3, 3), strides=(2, 2), padding="valid")(uconv4)
+    deconv3 = Conv2DTranspose(start_neurons * 8, (3, 3), strides=(2, 2), padding="valid")(uconv4)
     uconv3 = concatenate([deconv3, conv3])    
     uconv3 = Dropout(DropoutRatio)(uconv3)
     
-    uconv3 = Conv2D(start_neurons * 12, (3, 3), activation=None, padding="same")(uconv3)
-    uconv3 = residual_block(uconv3,start_neurons * 12)
-    uconv3 = residual_block(uconv3,start_neurons * 12)
+    uconv3 = Conv2D(start_neurons * 8, (3, 3), activation=None, padding="same")(uconv3)
+    uconv3 = residual_block(uconv3,start_neurons * 8)
+    uconv3 = residual_block(uconv3,start_neurons * 8)
     uconv3 = Activation('relu')(uconv3)
 
     # 25 -> 50
-    deconv2 = Conv2DTranspose(start_neurons * 8, (3, 3), strides=(2, 2), padding="same")(uconv3)
+    deconv2 = Conv2DTranspose(start_neurons * 4, (3, 3), strides=(2, 2), padding="same")(uconv3)
     uconv2 = concatenate([deconv2, conv2])
         
     uconv2 = Dropout(DropoutRatio)(uconv2)
-    uconv2 = Conv2D(start_neurons * 8, (3, 3), activation=None, padding="same")(uconv2)
-    uconv2 = residual_block(uconv2,start_neurons * 8)
-    uconv2 = residual_block(uconv2,start_neurons * 8)
+    uconv2 = Conv2D(start_neurons * 4, (3, 3), activation=None, padding="same")(uconv2)
+    uconv2 = residual_block(uconv2,start_neurons * 4)
+    uconv2 = residual_block(uconv2,start_neurons * 4)
     uconv2 = Activation('relu')(uconv2)
     
     # 50 -> 101
     #deconv1 = Conv2DTranspose(start_neurons * 1, (3, 3), strides=(2, 2), padding="same")(uconv2)
-    deconv1 = Conv2DTranspose(start_neurons * 4, (3, 3), strides=(2, 2), padding="valid")(uconv2)
+    deconv1 = Conv2DTranspose(start_neurons * 1, (3, 3), strides=(2, 2), padding="valid")(uconv2)
     uconv1 = concatenate([deconv1, conv1])
     
     uconv1 = Dropout(DropoutRatio)(uconv1)
-    uconv1 = Conv2D(start_neurons * 4, (3, 3), activation=None, padding="same")(uconv1)
-    uconv1 = residual_block(uconv1,start_neurons * 4)
-    uconv1 = residual_block(uconv1,start_neurons * 4)
+    uconv1 = Conv2D(start_neurons * 1, (3, 3), activation=None, padding="same")(uconv1)
+    uconv1 = residual_block(uconv1,start_neurons * 1)
+    uconv1 = residual_block(uconv1,start_neurons * 1)
     uconv1 = Activation('relu')(uconv1)
     
     uconv1 = Dropout(DropoutRatio/2)(uconv1)
@@ -296,13 +296,12 @@ model.compile(loss="binary_crossentropy", optimizer=adam, metrics=[my_iou_metric
 model.summary()
 
 early_stopping = EarlyStopping(monitor='val_my_iou_metric', mode = 'max',patience=25, verbose=1)
-model_checkpoint = ModelCheckpoint("./unet_best1.model",monitor='val_my_iou_metric', 
+filepath="weights.best.hdf5"
+model_checkpoint = ModelCheckpoint(filepath,monitor='val_my_iou_metric', 
                                    mode = 'max', save_best_only=True, verbose=1)
 
 
-model.save('my_model_keras.h5') 
-model.save_weights('my_model_weights.h5')
-reduce_lr = ReduceLROnPlateau(monitor='val_my_iou_metric', mode = 'max',factor=0.3, patience=5, min_lr=0.0000001, verbose=1)
+reduce_lr = ReduceLROnPlateau(monitor='val_my_iou_metric', mode = 'max',factor=0.7, patience=5, min_lr=0.0000001, verbose=1)
 #reduce_lr = ReduceLROnPlateau(factor=0.2, patience=5, min_lr=0.00001, verbose=1)
 
 epochs = 200
@@ -314,6 +313,9 @@ history = model.fit(x_train2, y_train2,
                     batch_size=batch_size,
                     callbacks=[early_stopping, model_checkpoint, reduce_lr], 
                     verbose=2)
+model.save('./unet_best1.model') 
+model.save_weights('my_model_weights.h5')
+model.load_weights("weights.best.hdf5")
 
 model = load_model("./unet_best1.model",custom_objects={'my_iou_metric': my_iou_metric})
 
